@@ -1,0 +1,40 @@
+# Byte-compiled / optimized Python files
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# Logs
+*.log
+
+# Dependency directories
+venv/
+env/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# IDE files
+.vscode/
+.idea/
+
+# Editor backups
+*~
+
+# Unit test / coverage reports
+.coverage
+htmlcov/
+
+# Database
+*.db
+
+# Development specific files
+*.swp
+*.swo
+
+# Ignore .env file in the root directory, but keep the .env.example file
+!.env.example
