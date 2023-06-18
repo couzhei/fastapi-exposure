@@ -1,6 +1,15 @@
 from fastapi import FastAPI
 
+from fastapi import Path
+from enum import Enum
+
+class AccountType(str, Enum):
+    FREE = 'free'
+    PRO = 'pro'
+
 app = FastAPI()
+
+
 @app.get("/") # i.e. in the root path when a GET request is received
 async def root():
     return {"message": "Hello FastAPI "}
@@ -27,3 +36,32 @@ async def root_car(id):
 @app.get("/carh/{id}")
 async def hinted_car_id(id: int): # This time using type-hinting
     return {"car_id": id}
+
+# it is important to remember that, like in other web frameworks, order matters.
+# @app.get("/user/{id}")
+# async def user(id:int):
+#     return {"user": id}
+
+# @app.get('/user/me')
+# async def user():
+#     return {"This is": "me"}
+
+# writing in the above order raise an Error: Unprocessable Entity
+# the proper ordering must be:
+@app.get('/user/me')
+async def user():
+    return {"This is": "me"}
+
+@app.get("/user/{id}")
+async def user(id:int):
+    return {"user": id}
+
+
+@app.get("/account/{acc_type}/{months}")
+async def account( acc_type:AccountType, months:int = Path(...,
+ge=3,le=12)):
+    return {
+        "message":"Account created",
+        "account_type":acc_type,
+        "months":months
+        }
