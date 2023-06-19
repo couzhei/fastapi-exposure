@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from fastapi import Path
 from enum import Enum
 
+from pydantic import BaseModel, Field
+
 class AccountType(str, Enum):
     FREE = 'free'
     PRO = 'pro'
@@ -58,10 +60,39 @@ async def user(id:int):
 
 
 @app.get("/account/{acc_type}/{months}")
-async def account( acc_type:AccountType, months:int = Path(...,
-ge=3,le=12)):
+async def account( acc_type:AccountType, months:int = Path(...,\
+                                                           ge=3,le=12)):
     return {
         "message":"Account created",
         "account_type":acc_type,
         "months":months
         }
+
+# Question mark in the previous expression is a separator that tells us where the query string begins,
+# while the ampersands, &, allow us to add more than one assignment (the equals signs, =).
+# Query parameters are usually used to apply filters, sort, order, or limit query sets, apply paginations to
+# a long list of results, and similar tasks. FastAPI treats them similarly to path parameters. They will be,
+# so to say, automatically picked up by FastAPI and available for processing in our endpoint functions.
+
+
+# @app.get("/cars/price")
+# async def cars_by_price(min_price: int=0, max_price: int=100000):
+#     """ Of course, this particular solution is not very good - we do not ensure the basic condition that the
+#         minimum price should be lower than the maximum price, but that can easily be handled by Pydantic
+#         object-level validation.
+#     """
+#     return{"Message":f"Listing cars with prices between {min_price} and {max_price}"}
+
+
+
+class CarPrice(BaseModel):
+    min_price: int = Field(..., title="Minimum Price", description="The minimum price of the car")
+    max_price: int = Field(..., title="Maximum Price", description="The maximum price of the car")
+
+@app.get("/cars/price")
+async def cars_by_price(min_price: int=0, max_price: int=100000):
+    car_price = CarPrice(min_price=0, max_price=100000)
+    if car_price.min_price >= car_price.max_price:
+        raise ValueError("Invalid price range: min_price should be lower than max_price")
+    return {"Message": f"Listing cars with prices between {car_price.min_price} and {car_price.max_price}"}
+
