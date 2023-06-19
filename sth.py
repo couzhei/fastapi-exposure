@@ -96,3 +96,15 @@ async def cars_by_price(min_price: int=0, max_price: int=100000):
         raise ValueError("Invalid price range: min_price should be lower than max_price")
     return {"Message": f"Listing cars with prices between {car_price.min_price} and {car_price.max_price}"}
 
+
+# Yet another solution is using this
+# please add the following to the top of the page
+from fastapi import HTTPException
+
+@app.get("/cars/price")
+async def cars_by_price(min_price: int = 0, max_price: int = 100000):
+    if min_price >= max_price:
+        raise HTTPException(status_code=400, detail="Invalid price range: min_price should be lower than max_price")
+    return {"Message": f"Listing cars with prices between {min_price} and {max_price}"}
+
+
